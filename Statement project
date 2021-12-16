@@ -1,0 +1,130 @@
+#include<stdio.h>
+#include<string.h>
+#include<stdlib.h>
+#pragma warning(disable:4996)
+
+typedef struct person {
+	char name[21];
+	char phone[16];
+	char birthday[9];
+} person;
+
+void printMainMenu();
+void printAll(person *p, int n);
+void insertContact(person *p, int n);
+int deleteContact(person *p, int n);
+void findContactByBirth(person *p, int n);
+
+int main() {
+	person per[100], *p = per;
+	int numcontact = 0;
+	int menu;
+	int p_num = 0;
+
+	while (1) {
+		printMainMenu();
+		scanf("%d", &menu);
+		switch (menu) {
+		case 1:
+			insertContact(p, p_num);
+			p_num++;
+			break;
+		case 2:
+			printAll(p, p_num);
+			break;
+		case 3:
+			p_num = deleteContact(p, p_num);
+			break;
+		case 4:
+			findContactByBirth(p, p_num);
+			break;
+		case 5:
+			return 0;
+		}
+	}
+
+	return 0;
+}
+
+void printMainMenu() {//메뉴 출력 
+	printf("*****Menu*****\n");
+	printf("<1.Registration><2.ShowAll><3.Delete><4.FindByBirth><5.Exit>\n");
+	printf("Enter_the_menu_number:");
+}
+
+void insertContact(person *p, int n) {//1번
+	if (n > 100) {
+		printf("OVERFLOW\n");
+		return;
+	}
+	printf("Name:");
+	scanf("%s", p[n].name);
+	getchar();
+	printf("Phone_number:");
+	scanf("%s", p[n].phone);
+	getchar();
+	printf("Birth:");
+	scanf("%s", p[n].birthday);
+	printf("<<%d>>\n", n + 1);
+
+	person save;
+	for (int i = 0; i < n; i++) {
+		for (int j = i + 1; j < n + 1; j++) {
+			if (strcmp(p[i].name, p[j].name) > 0) {
+				save = p[i];
+				p[i] = p[j];
+				p[j] = save;
+			}
+		}
+	}
+}
+
+void printAll(person *p, int n) {//2번
+	for (int i = 0; i < n; i++) {
+		printf("%s %s %s\n", p[i].name, p[i].phone, p[i].birthday);
+	}
+}
+
+int deleteContact(person *p, int n) {//3번
+	if (n == 0) {
+		printf("NO MEMBER\n");
+		return n;
+	}
+	char name[16] = { 0 };
+	int cnt = 0, save_num = 0;
+	printf("Name:"); // 고정
+	scanf("%s", name);
+
+	for (int i = 0; i < n; i++) {
+		if (strcmp(p[i].name, name) == 0) {
+			p[i] = p[i + 1];
+			save_num = i + 1, cnt = 1;
+			break;
+		}
+	}
+	if (cnt == 1) {
+		for (int i = save_num; i < (n - 1); i++) {
+			p[i] = p[i + 1];
+		}
+		n--;
+	}
+	return n;
+}
+
+void findContactByBirth(person *p, int n) {//4번
+	char birth[3] = { 0 };
+	printf("Birth:");
+	scanf("%s", birth);
+	for (int i = 0; i < n; i++) {
+		if (strlen(birth) == 1) {
+			if (birth[0] == p[i].birthday[5] && p[i].birthday[4] == '0') {
+				printf("%s %s %s\n", p[i].name, p[i].phone, p[i].birthday);
+			}
+		}
+		else {
+			if (birth[0] == p[i].birthday[4] && birth[1] == p[i].birthday[5]) {
+				printf("%s %s %s\n", p[i].name, p[i].phone, p[i].birthday);
+			}
+		}
+	}
+}
